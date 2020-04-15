@@ -15,10 +15,15 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import include,path
+from django.views.static import serve
+from django.conf import settings
+from django.conf.urls import url
 
 urlpatterns = [
     path('polls/', include('polls.urls')),
     path('admin/', admin.site.urls),
     # path('api/', include('blog_api.urls')),
-    path('api/', include('myblog.urls'))
+    path('api/', include('myblog.urls')),
+    url(r'(?P<path>.*)',serve,{'document_root':settings.MEDIA_ROOT})
+    
 ]

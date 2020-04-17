@@ -171,3 +171,7 @@ MEDIA_URL = '/uploads/'   #你上传的文件和图片会默认存在/uploads/ed
 
 # 自定义用户Model
 AUTH_USER_MODEL = 'myblog.User'
+
+REST_FRAMEWORK = {
+    "PAGE_SIZE": 1
+}

@@ -173,5 +173,35 @@ MEDIA_URL = '/uploads/'   #你上传的文件和图片会默认存在/uploads/ed
 AUTH_USER_MODEL = 'myblog.User'
 
 REST_FRAMEWORK = {
-    "PAGE_SIZE": 10
+    # 错误处理
+    'EXCEPTION_HANDLER': 'common.utils.custom_execption.custom_exception_handler',
+    # 分页器
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.LimitOffsetPagination',
+    # 分页最大条目数
+    "PAGE_SIZE": 10,
+    # 权限认证
+    # 'DEFAULT_PERMISSION_CLASSES': (
+    #     'rest_framework.permissions.IsAuthenticated',
+    # ),
+    # 身份认证
+    # session：session_id认证
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        # drf的这一阶段主要是做验证,middleware的auth主要是设置session和user到request对象
+        # 默认的验证是按照验证列表从上到下的验证
+        'rest_framework.authentication.BasicAuthentication',
+        'rest_framework.authentication.SessionAuthentication',
+        "rest_framework_jwt.authentication.JSONWebTokenAuthentication",
+    )
 }
+
+import datetime
+
+# 超时时间
+JWT_AUTH = {
+    'JWT_EXPIRATION_DELTA': datetime.timedelta(days=1),
+    # token前缀
+    'JWT_AUTH_HEADER_PREFIX': 'JWT',
+}
+
+# 引用Django自带的User表，继承使用时需要设置
+AUTH_USER_MODEL = "myblog.User"

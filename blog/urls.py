@@ -18,12 +18,16 @@ from django.urls import include,path
 from django.views.static import serve
 from django.conf import settings
 from django.conf.urls import url
+from rest_framework_jwt.views import obtain_jwt_token
+from myblog import views
 
 urlpatterns = [
     path('polls/', include('polls.urls')),
     path('admin/', admin.site.urls),
+    path('login/', obtain_jwt_token),
     # path('api/', include('blog_api.urls')),
     path('api/', include('myblog.urls')),
-    url(r'(?P<path>.*)',serve,{'document_root':settings.MEDIA_ROOT})
+    url(r'(?P<path>.*)',serve,{'document_root':settings.MEDIA_ROOT}),
+    # path('index/', views.Index.as_view()),
     
 ]

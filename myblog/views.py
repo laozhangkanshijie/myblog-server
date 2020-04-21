@@ -9,8 +9,9 @@ from . import serializers
 # 登录验证
 from . import jwtMiddleware
 # 重写返回数据, （谨记只是改了Response对象。）
-from common.utils.custom_response import  JsonResponse
+from common.utils.custom_response import JsonResponse
 from rest_framework import status
+
 
 # 重写返回数据
 # from . import serializers
@@ -25,7 +26,6 @@ from rest_framework import status
 # from rest_framework import filters
 # from django_filters import rest_framework
 # from django_filters.rest_framework import DjangoFilterBackend
-
 
 
 # class CustomViewBase(viewsets.ModelViewSet):
@@ -81,6 +81,7 @@ from rest_framework import status
 #         return JsonResponse(data=[],code=204,msg="delete resource success",status=status.HTTP_204_NO_CONTENT)
 
 
+
 # 获取所有文章列表
 class ArticleList(generics.ListAPIView):
     # queryset 为查询实例
@@ -91,7 +92,7 @@ class ArticleList(generics.ListAPIView):
     # 过滤器
     filter_backends = [filters.SearchFilter]
     # 可以在元组中写多个进行筛选。
-    search_fields = ['title', 'desc', 'content']
+    search_fields = ['title', 'desc', 'content','user__username']
 
     # 分页器
     pagination_class = pagination.LimitOffsetPagination
@@ -105,7 +106,7 @@ class ArticleList(generics.ListAPIView):
     #         # "search_fields": self.search_fields
     #     })
 
-    #局部认证的配置
+    # 局部认证的配置
     # authentication_classes = [jwtMiddleware.TokenAuth,]
 
     def list(self, request, *args, **kwargs):
@@ -119,14 +120,13 @@ class ArticleList(generics.ListAPIView):
             return self.get_paginated_response(serializer.data)
 
         serializer = self.get_serializer(queryset, many=True)
-        return JsonResponse(data=serializer.data,code=200,msg="success",status=status.HTTP_200_OK)
+        return JsonResponse(data=serializer.data, code=200, msg="success", status=status.HTTP_200_OK)
 
     def get_paginated_response(self, data):
         return JsonResponse(data={
-                    "total": self.paginator.count,
-                    "data": data
-                },code=200,msg="success",status=status.HTTP_200_OK)
-        
+            "total": self.paginator.count,
+            "data": data
+        }, code=200, msg="success", status=status.HTTP_200_OK)
 
 
 # class ArticleList(generics.ListCreateAPIView):
@@ -140,13 +140,9 @@ class ArticleDetail(generics.RetrieveAPIView):
     def retrieve(self, request, *args, **kwargs):
         instance = self.get_object()
         serializer = self.get_serializer(instance)
-        return JsonResponse(data=serializer.data,code=200,msg="success",status=status.HTTP_200_OK)
-
-
+        return JsonResponse(data=serializer.data, code=200, msg="success", status=status.HTTP_200_OK)
 
 
 # class ArticleDetail(generics.RetrieveUpdateDestroyAPIView):
 #     queryset = models.Article.objects.all()
 #     serializer_class = serializers.ArticleDetailSerializer
-
-

@@ -107,7 +107,7 @@ class ArticleList(generics.ListAPIView):
     #     })
 
     # 局部认证的配置
-    # authentication_classes = [jwtMiddleware.TokenAuth,]
+    authentication_classes = [jwtMiddleware.TokenAuth,]
 
     def list(self, request, *args, **kwargs):
         queryset = self.filter_queryset(self.get_queryset())

@@ -1,11 +1,16 @@
 #错误处理
 from rest_framework.views import exception_handler
+from rest_framework.exceptions import ValidationError
+from .custom_response import JsonResponse
 
 # 错误处理
 def custom_exception_handler(exc, context):
     # Call REST framework's default exception handler first,
     # to get the standard error response.
     response = exception_handler(exc, context)
+    
+    if isinstance(exc, ValidationError):
+        return JsonResponse (code=1,msg=exc.detail)
 
     # Now add the HTTP status code to the response.
     if response is not None:

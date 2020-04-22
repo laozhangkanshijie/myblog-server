@@ -42,7 +42,9 @@ INSTALLED_APPS = [
     'corsheaders',
     'blog_api',
     'rest_framework',
-    'myblog'
+    'django_filters',
+    'myblog',
+    
 ]
 
 MIDDLEWARE = [
@@ -175,6 +177,8 @@ AUTH_USER_MODEL = 'myblog.User'
 REST_FRAMEWORK = {
     # 错误处理
     'EXCEPTION_HANDLER': 'common.utils.custom_execption.custom_exception_handler',
+    # 过滤器
+    'DEFAULT_FILTER_BACKENDS': ['django_filters.rest_framework.DjangoFilterBackend'],
     # 分页器
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.LimitOffsetPagination',
     # 分页最大条目数

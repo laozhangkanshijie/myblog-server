@@ -22,7 +22,7 @@ from rest_framework_jwt.views import obtain_jwt_token
 from myblog import views
 
 urlpatterns = [
-    path('polls/', include('polls.urls')),
+    # path('polls/', include('polls.urls')),
     path('admin/', admin.site.urls),
     path('login/', obtain_jwt_token),
     # path('api/', include('blog_api.urls')),

@@ -12,6 +12,12 @@ from . import jwtMiddleware
 from common.utils.custom_response import JsonResponse
 from rest_framework import status
 
+#权限管理
+from rest_framework.permissions import IsAdminUser,IsAuthenticated
+
+#筛选过滤
+from django_filters.rest_framework import DjangoFilterBackend
+
 
 # 重写返回数据
 # from . import serializers
@@ -80,7 +86,25 @@ from rest_framework import status
 #         self.perform_destroy(instance)
 #         return JsonResponse(data=[],code=204,msg="delete resource success",status=status.HTTP_204_NO_CONTENT)
 
+class UserListView(generics.ListAPIView):
+    queryset = models.User.objects.all()
+    serializer_class = serializers.UserSerializer
+    # filter_backends = [DjangoFilterBackend]
 
+class CommentList(generics.ListAPIView):
+    queryset = models.Comment.objects.all()
+    serializer_class = serializers.CommentsSerializer
+
+    # 过滤器
+    filter_backends = [DjangoFilterBackend,]
+    # 可以在元组中写多个进行筛选。
+    filterset_fields = ['article','pid']
+
+    def list(self, request):
+        #  !!!记得下面这句代码很重要！！！
+        queryset = self.filter_queryset(self.get_queryset())
+        serializer = serializers.CommentsSerializer(queryset, many=True)
+        return JsonResponse(data=serializer.data, code=200, msg="success", status=status.HTTP_200_OK)
 
 # 获取所有文章列表
 class ArticleList(generics.ListAPIView):
@@ -107,7 +131,7 @@ class ArticleList(generics.ListAPIView):
     #     })
 
     # 局部认证的配置
-    authentication_classes = [jwtMiddleware.TokenAuth,]
+    # authentication_classes = [jwtMiddleware.TokenAuth,]
 
     def list(self, request, *args, **kwargs):
         queryset = self.filter_queryset(self.get_queryset())
@@ -133,6 +157,10 @@ class ArticleList(generics.ListAPIView):
 #     queryset = models.Article.objects.all()
 #     serializer_class = serializers.ArticleSerializer
 
+# class ArticleList(generics.ListCreateAPIView):
+#     queryset = models.Article.objects.all()
+#     serializer_class = serializers.ArticleSerializer
+
 class ArticleDetail(generics.RetrieveAPIView):
     queryset = models.Article.objects.all()
     serializer_class = serializers.ArticleDetailSerializer
@@ -146,3 +174,14 @@ class ArticleDetail(generics.RetrieveAPIView):
 # class ArticleDetail(generics.RetrieveUpdateDestroyAPIView):
 #     queryset = models.Article.objects.all()
 #     serializer_class = serializers.ArticleDetailSerializer
+
+
+
+# class CommentDetail(generics.RetrieveAPIView):
+#     queryset = models.Comment.objects.all()
+#     serializer_class = serializers.CommentDetailSerializer
+
+#     def retrieve(self, request, *args, **kwargs):
+#         instance = self.get_object()
+#         serializer = self.get_serializer(instance)
+#         return JsonResponse(data=serializer.data, code=200, msg="success", status=status.HTTP_200_OK)

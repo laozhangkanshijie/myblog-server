@@ -42,9 +42,10 @@ INSTALLED_APPS = [
     'corsheaders',
     'blog_api',
     'rest_framework',
+    'rest_framework.authtoken', #TOKEN 验证
     'django_filters',
     'myblog',
-    
+
 ]
 
 MIDDLEWARE = [
@@ -204,7 +205,10 @@ import datetime
 JWT_AUTH = {
     'JWT_EXPIRATION_DELTA': datetime.timedelta(days=1),
     # token前缀
-    'JWT_AUTH_HEADER_PREFIX': 'JWT',
+    'JWT_ISSUER': 'http://fasfdas.baicu',
+    'JWT_AUTH_HEADER_PREFIX': 'TOKEN',
+    'JWT_ALLOW_REFRESH': True,
+    'JWT_REFRESH_EXPIRATION_DELTA': datetime.timedelta(days=1)
 }
 
 # 引用Django自带的User表，继承使用时需要设置

@@ -4,20 +4,61 @@ from rest_framework.response import Response
 from rest_framework import filters
 from rest_framework import pagination
 
+from rest_framework.views import APIView
+from rest_framework import status
+
 from . import models
 from . import serializers
 # 登录验证
 from . import jwtMiddleware
+from django.contrib.auth import authenticate
+from django.contrib.auth import login
+from django.shortcuts import Http404
+from rest_framework import mixins
+from rest_framework.viewsets import GenericViewSet
+#权限管理
+from rest_framework import permissions
+from rest_framework_jwt.authentication import JSONWebTokenAuthentication
+from rest_framework_jwt.settings import api_settings
 # 重写返回数据, （谨记只是改了Response对象。）
 from common.utils.custom_response import JsonResponse
 from rest_framework import status
 
-#权限管理
-from rest_framework.permissions import IsAdminUser,IsAuthenticated
+
 
 #筛选过滤
 from django_filters.rest_framework import DjangoFilterBackend
 
+class createUser(mixins.CreateModelMixin,GenericViewSet):
+    queryset = models.User.objects.all()
+    serializer_class = serializers.UserSerializer
+
+"""1. 登陆"""
+class loginView(APIView):
+    """登陆成功后,获取TOKEN"""
+    def post(self,request):
+        user = authenticate(username=request.data["username"], password=request.data["password"])
+        if not user:
+            raise Http404("账号密码不匹配")
+        login(request, user)
+        jwt_payload_handler = api_settings.JWT_PAYLOAD_HANDLER
+        jwt_encode_handler = api_settings.JWT_ENCODE_HANDLER
+        payload = jwt_payload_handler(user)
+        token = jwt_encode_handler(payload)
+        # return Response({ "success": True, "msg": "登录成功","results": token},status=status.HTTP_200_OK)
+        return JsonResponse(data={"token": token},code=200,msg="success",status=status.HTTP_200_OK)
+        
+"""3. 获取用户列表(验证token)"""
+class getUser(mixins.ListModelMixin,GenericViewSet):
+    # authentication_classes = (JSONWebTokenAuthentication,)
+    # permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
+    queryset = models.User.objects.all()
+    serializer_class = serializers.UserSerializer
+    # 权限
+    # permission_classes = (permissions.AllowAny,) # 所有用户
+    # permission_classes = (permissions.IsAuthenticated,) # 登陆成功的token
+    # permission_classes = (permissions.IsAuthenticatedOrReadOnly,) # 登陆成功的token,只能读操作
+    # permission_classes = (permissions.IsAdminUser,) # 登陆成功的管理员token
 
 # 重写返回数据
 # from . import serializers
@@ -86,9 +127,9 @@ from django_filters.rest_framework import DjangoFilterBackend
 #         self.perform_destroy(instance)
 #         return JsonResponse(data=[],code=204,msg="delete resource success",status=status.HTTP_204_NO_CONTENT)
 
-class UserListView(generics.ListAPIView):
-    queryset = models.User.objects.all()
-    serializer_class = serializers.UserSerializer
+# class UserListView(generics.ListAPIView):
+#     queryset = models.User.objects.all()
+#     serializer_class = serializers.UserSerializer
     # filter_backends = [DjangoFilterBackend]
 
 class CommentList(generics.ListAPIView):

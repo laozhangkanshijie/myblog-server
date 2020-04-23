@@ -1,15 +1,26 @@
 from rest_framework import serializers
 from . import models
 
+from drf_dynamic_fields import DynamicFieldsMixin
+
 # class ArticleSerializer(serializers.ModelSerializer):
 #     class Meta:
 #         fields = ("__all__")
 #         model = models.Article
 
-class UserSerializer(serializers.ModelSerializer):
+"""2. 新增玩家"""
+class UserSerializer(DynamicFieldsMixin,serializers.ModelSerializer):
     class Meta:
-        fields = ("__all__")
         model = models.User
+        fields = ["username","password",]
+    def create(self, validated_data):
+        user= models.User.objects.create_user(**validated_data) # 这里新增玩家必须用create_user,否则密码不是秘文
+        return user
+
+# class UserSerializer(serializers.ModelSerializer):
+#     class Meta:
+#         fields = ("__all__")
+#         model = models.User
 
 class ArticleSerializer(serializers.ModelSerializer):
 

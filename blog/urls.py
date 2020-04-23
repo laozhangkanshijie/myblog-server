@@ -24,7 +24,7 @@ from myblog import views
 urlpatterns = [
     # path('polls/', include('polls.urls')),
     path('admin/', admin.site.urls),
-    path('login/', obtain_jwt_token),
+    # path('login/', obtain_jwt_token),
     # path('api/', include('blog_api.urls')),
     path('api/', include('myblog.urls')),
     url(r'(?P<path>.*)',serve,{'document_root':settings.MEDIA_ROOT}),

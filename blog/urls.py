@@ -14,12 +14,17 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import include,path
+from django.urls import include,path,re_path
 from django.views.static import serve
 from django.conf import settings
 from django.conf.urls import url
+# 获取JWT的token用
 from rest_framework_jwt.views import obtain_jwt_token
 from myblog import views
+from rest_framework.routers import DefaultRouter
+
+# suersViewRouter = DefaultRouter()
+# suersViewRouter.register('', views.UserViewset, )
 
 urlpatterns = [
     # path('polls/', include('polls.urls')),
@@ -29,5 +34,7 @@ urlpatterns = [
     path('api/', include('myblog.urls')),
     url(r'(?P<path>.*)',serve,{'document_root':settings.MEDIA_ROOT}),
     # path('index/', views.Index.as_view()),
+    # re_path('api/user/info/$', views.get_user_info),
+    # path('users/',include(suersViewRouter.urls)), # 新增用户
     
 ]

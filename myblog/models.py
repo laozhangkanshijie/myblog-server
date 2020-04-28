@@ -1,7 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 
-
 # Create your models here.
 '''
 ############ 本地模型用到的字段类型和和参数的含义

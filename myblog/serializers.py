@@ -3,6 +3,10 @@ from . import models
 
 from drf_dynamic_fields import DynamicFieldsMixin
 
+#获取用户详情
+from django.contrib.auth import get_user_model
+from rest_framework.validators import UniqueValidator
+
 # class ArticleSerializer(serializers.ModelSerializer):
 #     class Meta:
 #         fields = ("__all__")
@@ -22,10 +26,40 @@ class UserSerializer(DynamicFieldsMixin,serializers.ModelSerializer):
 #         fields = ("__all__")
 #         model = models.User
 
+# User = get_user_model()
+# class UserRegisterSerializer(serializers.ModelSerializer):
+#     # 利用drf中的validators验证username是否唯一
+#     username = serializers.CharField(required=True, allow_blank=False, validators=[UniqueValidator(queryset=User.objects.all(),
+#                                                                                         message='用户已经存在')])
+#     print(username)
+#     password = serializers.CharField(
+#          style={"input_type": "password"},help_text="密码", label="密码", write_only=True,
+#      )
+#     print(password, "password")
+
+#     def create(self, validated_data):
+#          user = super(UserRegisterSerializer, self).create(validated_data= validated_data)
+#          user.set_password(validated_data["password"])
+#          user.save()
+#          return user
+#     class Meta:
+#          model = User
+#          fields = ( "username", "password", "role", "avatar")
+
+
+class UserDetailSerializer(serializers.ModelSerializer):
+    """
+    用户详情序列表类
+    """
+    class Meta:
+        model = models.User
+        fields = ('id','username','email','avatar','qq','mobile','url')
+
 class ArticleSerializer(serializers.ModelSerializer):
 
     user = serializers.CharField(source="user.username")
     avatar_link = serializers.CharField(source="user.avatar")
+    # category = serializers.CharField(source="category.name")
 
     # avatar_link = serializers.serializerMethodField()
 
@@ -60,6 +94,11 @@ class ArticleDetailSerializer(serializers.ModelSerializer):
         fields = ("__all__")
         model = models.Article
 
+class createArticleSerializer(serializers.ModelSerializer):
+    class Meta:
+        fields = ("__all__")
+        model = models.Article
+
 
 class CommentsSerializer(serializers.ModelSerializer):
     date_publish = serializers.DateTimeField(format="%Y-%m-%d %X")
@@ -77,3 +116,9 @@ class CommentsSerializer(serializers.ModelSerializer):
 #     class Meta:
 #         fields = ('username','content','avatar_link','date_publish','user','article','pid')
 #         model = models.Comment
+
+
+class CategorySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = models.Category
+        fields = ('__all__')

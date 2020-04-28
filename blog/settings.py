@@ -53,6 +53,7 @@ MIDDLEWARE = [
     'django.contrib.sessions.middleware.SessionMiddleware',
     'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
+    # Django跨站请求保护
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
@@ -60,6 +61,8 @@ MIDDLEWARE = [
 ]
 
 CORS_ALLOW_CREDENTIALS = True
+
+# 允许随意跨域
 CORS_ORIGIN_ALLOW_ALL = True
 CORS_ORIGIN_WHITELIST = (
     'http://127.0.0.1:8080',
@@ -157,7 +160,8 @@ USE_I18N = True
 
 USE_L10N = True
 
-USE_TZ = True
+# 数据库存储使用时间，True时间会被存为UTC的时间
+USE_TZ = False
 
 
 # Static files (CSS, JavaScript, Images)
@@ -184,7 +188,7 @@ REST_FRAMEWORK = {
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.LimitOffsetPagination',
     # 分页最大条目数
     "PAGE_SIZE": 10,
-    # 权限认证
+    # 所有权限认证
     # 'DEFAULT_PERMISSION_CLASSES': (
     #     'rest_framework.permissions.IsAuthenticated',
     # ),
@@ -192,10 +196,13 @@ REST_FRAMEWORK = {
     # session：session_id认证
     'DEFAULT_AUTHENTICATION_CLASSES': (
         # drf的这一阶段主要是做验证,middleware的auth主要是设置session和user到request对象
-        # 默认的验证是按照验证列表从上到下的验证
-        'rest_framework.authentication.BasicAuthentication',
+        # 默认的验证是按照验证列表从上到下的验证，# 在前面的认证方案优先
+        # 如果前端带错误的(如过期的)Token,那么在访问公共页面时还是会出认证错误
+        # 所以不在这里配置全局的Token认证,而是改到views里配置
+        'rest_framework.authentication.BasicAuthentication', 
         'rest_framework.authentication.SessionAuthentication',
-        "rest_framework_jwt.authentication.JSONWebTokenAuthentication",
+        "rest_framework_jwt.authentication.JSONWebTokenAuthentication", # JWT认证
+        # JWT也和普通的Token一样,还是配置到具体要做验证的view里面去
     )
 }
 
@@ -210,6 +217,8 @@ JWT_AUTH = {
     'JWT_ALLOW_REFRESH': True,
     'JWT_REFRESH_EXPIRATION_DELTA': datetime.timedelta(days=1)
 }
+
+
 
 # 引用Django自带的User表，继承使用时需要设置
 AUTH_USER_MODEL = "myblog.User"

@@ -97,7 +97,7 @@ ROOT_URLCONF = 'blog.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [os.path.join(BASE_DIR, 'templates'),],
+        'DIRS': [os.path.join(BASE_DIR, 'frontend/dist'),],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -170,7 +170,7 @@ USE_TZ = False
 STATIC_URL = '/static/'
 
 STATICFILES_DIRS = (
-    os.path.join(BASE_DIR, 'static'),  # 静态文件路径设置
+    os.path.join(BASE_DIR, 'frontend/dist/static'),  # 静态文件路径设置
 )
 
 MEDIA_ROOT = os.path.join(BASE_DIR, 'uploads')  #uploads必须存在，且在项目目录下

@@ -18,6 +18,7 @@ from django.urls import include,path,re_path
 from django.views.static import serve
 from django.conf import settings
 from django.conf.urls import url
+from django.views.generic.base import TemplateView
 # 获取JWT的token用
 from rest_framework_jwt.views import obtain_jwt_token
 from myblog import views
@@ -32,6 +33,8 @@ urlpatterns = [
     # path('login/', obtain_jwt_token),
     # path('api/', include('blog_api.urls')),
     path('api/', include('myblog.urls')),
+    url(r'^$', TemplateView.as_view(template_name="index.html")),
+
     url(r'(?P<path>.*)',serve,{'document_root':settings.MEDIA_ROOT}),
     # path('index/', views.Index.as_view()),
     # re_path('api/user/info/$', views.get_user_info),
